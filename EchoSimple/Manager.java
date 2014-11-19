@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.LinkedList;
 import java.lang.String;
 
-public class Servidor 
+public class Manager 
 {
    // Linked List where all the ID's are stored
    static LinkedList link = new LinkedList();
@@ -35,8 +35,8 @@ public class Servidor
 			System.out.println(link.get(i));
    }
 
-   public static void main(String args[]) {
 
+   public static void main(String args[]) {
 	byte[] buffer = new byte[4096];
       try{
            socket = new DatagramSocket(7); // Port number to be connected
@@ -52,20 +52,18 @@ public class Servidor
 			// Check the packet data, divide it by checking a new register
 			String pData = new String(packet.getData(), 0, packet.getLength()-4);
 
-			if (pData.equals("REGISTER")) { // New ID added
+			if (pData.equals("REGISTER")) {
 				String newID = new String(packet.getData(), 8, packet.getLength()-8);
 
 				if(checkDuplicate(newID))
 					System.out.println("ID ALREADY EXISTS..");
 
 				else {
-
 					link.add(newID + packet.getSocketAddress());
 					System.out.println("ID " + newID + " added..");
 				}
 				
-				//System.out.println(packet.getSocketAddress());
-			}
+			} // Try to register an ID
 
 			else if (pData.equals("SHOW"))
 						showElementsofLink();
