@@ -54,6 +54,7 @@ public class Manager
 
    /**
    	* Method used to send the message of a client to the server
+   	* @s ID of the source
    	* @d ID of the destination
    	* @m message to be sent to the server, with source and destination IDs
     **/
@@ -88,9 +89,19 @@ public class Manager
 
 			// Check the packet data, divide it by checking a new register
 			//String pData = new String(packet.getData(), 0, packet.getLength()-4);
-			String pData = new String(packet.getData(), 0, packet.getLength());
-			String register = pData.substring(0, 8);
-			String slink = pData.substring(0, 8);
+			String pData = "";
+			String register = "";
+			String slink = "";
+			boolean badrequest = false;
+			try {
+				pData = new String(packet.getData(), 0, packet.getLength());
+				register = pData.substring(0, 8);
+				slink = pData.substring(0, 8);
+			} catch (StringIndexOutOfBoundsException e) {
+				badrequest = true;
+				System.out.println("..Bad Request");
+			}
+			
 
 			if (register.equals("REGISTER")) {
 				String newID = new String(packet.getData(), 8, packet.getLength()-8);
@@ -99,7 +110,7 @@ public class Manager
 					System.out.println("ID ALREADY EXISTS..");
 
 				else {
-					link.add(newID + packet.getAddress());
+					link.add(newID + packet.getAddress()); // Address of the Socket
 					System.out.println("ID " + newID + " added..");
 				}
 				
@@ -107,7 +118,7 @@ public class Manager
 
 			else if (slink.equals("SHOWLINK"))
 						showElementsofLink();
-			else {
+			else if(!badrequest) {
 				String source = pData.substring(0, 4);
 				String destination = pData.substring(4, 8);
 				String mensaje = pData.substring(8, pData.length());
@@ -123,8 +134,6 @@ public class Manager
 					System.out.println("Message sent");
 				}
 			}
-
-			socket.send(packet);
 
 	   }catch (IOException ioe){
 		System.err.println ("Error : " + ioe);

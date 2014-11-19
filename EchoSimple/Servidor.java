@@ -7,6 +7,7 @@ public class Servidor
 
    public static void main(String args[]){
 
+//------------------------------------------------REGISTRATION
    	if (args.length != 1){
 		System.err.println ("Syntax - java Cliente hostname");
 		return;
@@ -29,12 +30,7 @@ public class Servidor
 	  dataOut = theLine.getBytes();
 	  DatagramPacket sendPacket = new DatagramPacket(dataOut, dataOut.length, server, 7);
 	  socket.send(sendPacket);
-	  System.out.println("Sent..");
-	  byte[] dataIn = new byte[256];
-	  DatagramPacket receivePacket = new DatagramPacket(dataIn, 256);
-	  socket.receive (receivePacket);
-      String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
-      System.out.println("From server: " + s);
+	  System.out.println("Sever up");
      }  // end try
      catch (UnknownHostException e) {System.err.println(e);}  
      catch (SocketException se) {System.err.println(se);}

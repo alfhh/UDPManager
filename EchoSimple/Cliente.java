@@ -28,11 +28,6 @@ public class Cliente{
         DatagramPacket sendPacket = new DatagramPacket(dataOut, dataOut.length, server, 7);
         socket.send(sendPacket);
         System.out.println("Sent..");
-	  byte[] dataIn = new byte[256];
-	  DatagramPacket receivePacket = new DatagramPacket(dataIn, 256);
-	  socket.receive (receivePacket);
-        String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
-        System.out.println("From server: " + s);
       }  // end while
      }  // end try
      catch (UnknownHostException e) {System.err.println(e);}  
