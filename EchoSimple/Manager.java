@@ -26,6 +26,23 @@ public class Manager
 	}
 
    /**
+	* To return the SocketAddress of an ID
+	* @d ID of the destination
+   	**/
+   public static String searchSocketAddress(String d) {
+   		String sAddress = "";	
+   		for (int i = 0; i < link.size(); i++) {
+			String l = new String((link.get(i).toString()).getBytes(), 0, 4);
+			if(d.equals(l)){
+				String temp = link.get(i).toString();
+				sAddress = temp.substring(5, temp.length());
+   			}
+		}
+		return sAddress;
+   }
+
+
+   /**
 	* Method used to display all the elements of the
 	* LinkedList.
    	**/
@@ -33,6 +50,22 @@ public class Manager
    		System.out.println("Recorded ID's: ");
 		for (int i = 0; i < link.size(); i++)
 			System.out.println(link.get(i));
+   }
+
+   /**
+   	* Method used to send the message of a client to the server
+   	* @d ID of the destination
+   	* @m message to be sent to the server, with source and destination IDs
+    **/
+   public static void sendToServer(String d, String m) {
+   		try{
+	   		InetAddress addr = InetAddress.getByName(searchSocketAddress(d));
+	   		socket.connect(addr, 4);
+	   		DatagramPacket sendPacket = new DatagramPacket(dataOut, dataOut.length, server, 7);
+        	socket.send(sendPacket);
+		}catch (UnknownHostException uhe){}
+		
+   		
    }
 
 
@@ -50,9 +83,12 @@ public class Manager
 			socket.receive(packet); // Received packet
 
 			// Check the packet data, divide it by checking a new register
-			String pData = new String(packet.getData(), 0, packet.getLength()-4);
+			//String pData = new String(packet.getData(), 0, packet.getLength()-4);
+			String pData = new String(packet.getData(), 0, packet.getLength());
+			String register = pData.substring(0, 8);
+			String slink = pData.substring(0, 8);
 
-			if (pData.equals("REGISTER")) {
+			if (register.equals("REGISTER")) {
 				String newID = new String(packet.getData(), 8, packet.getLength()-8);
 
 				if(checkDuplicate(newID))
@@ -65,12 +101,22 @@ public class Manager
 				
 			} // Try to register an ID
 
-			else if (pData.equals("SHOW"))
+			else if (slink.equals("SHOWLINK"))
 						showElementsofLink();
-			else
-				System.out.println("Other operation..");
+			else {
+				String destination = pData.substring(4, 8);
+				String mensaje = pData.substring(8, pData.length());
 
-			socket.send(packet); // Packet resent to the source
+				if(!checkDuplicate(destination))
+					System.out.println("Target not found");
+				
+				else {
+					sendToServer(destination, mensaje);
+					System.out.println("Message sent");
+				}
+			}
+
+			socket.send(packet);
 
 	   }catch (IOException ioe){
 		System.err.println ("Error : " + ioe);

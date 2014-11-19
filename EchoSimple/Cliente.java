@@ -26,8 +26,8 @@ public class Cliente{
         byte[] dataOut = new byte[theLine.length()];
         dataOut = theLine.getBytes();
         DatagramPacket sendPacket = new DatagramPacket(dataOut, dataOut.length, server, 7);
-        System.out.println("Size: "+dataOut.length);
         socket.send(sendPacket);
+        System.out.println("Sent..");
 	  byte[] dataIn = new byte[256];
 	  DatagramPacket receivePacket = new DatagramPacket(dataIn, 256);
 	  socket.receive (receivePacket);
