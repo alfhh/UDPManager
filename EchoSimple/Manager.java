@@ -57,14 +57,13 @@ public class Manager
    	* @d ID of the destination
    	* @m message to be sent to the server, with source and destination IDs
     **/
-   public static void sendToServer(String d, String m) {
-   		System.out.println(searchAddress(d));
+   public static void sendToServer(String s, String d, String m) {
    		try{
 
 	   		DatagramSocket nuevo = new DatagramSocket();
 	   		InetAddress addr = InetAddress.getByName(searchAddress(d));
 	   		nuevo.connect(addr, 4);
-	   		DatagramPacket ms = new DatagramPacket(m.getBytes(), m.length(), addr, 4);
+	   		DatagramPacket ms = new DatagramPacket((s+m).getBytes(), (s+m).length(), addr, 4);
         	nuevo.send(ms);
 		}
 		catch (UnknownHostException uhe){}
@@ -109,14 +108,18 @@ public class Manager
 			else if (slink.equals("SHOWLINK"))
 						showElementsofLink();
 			else {
+				String source = pData.substring(0, 4);
 				String destination = pData.substring(4, 8);
 				String mensaje = pData.substring(8, pData.length());
 
-				if(!checkDuplicate(destination))
+				if(!checkDuplicate(source))
+					System.out.println("Source not found");
+
+				else if(!checkDuplicate(destination))
 					System.out.println("Target not found");
 				
 				else {
-					sendToServer(destination, mensaje);
+					sendToServer(source, destination, mensaje);
 					System.out.println("Message sent");
 				}
 			}

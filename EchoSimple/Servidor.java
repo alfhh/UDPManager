@@ -51,8 +51,10 @@ public class Servidor
 	   try{
 		DatagramPacket packet = new DatagramPacket(buffer, 4096);
 		socket.receive(packet);
-		System.out.println("Me llego..");
-		socket.send(packet);
+		String orginal = new String(packet.getData(), 0, packet.getLength());
+		String source = orginal.substring(0, 4);
+		String message = orginal.substring(4, orginal.length());
+		System.out.println(source + " says: " + message);
 	   }catch (IOException ioe){
 		System.err.println ("Error : " + ioe);
 	   }
