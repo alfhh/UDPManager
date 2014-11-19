@@ -26,10 +26,10 @@ public class Manager
 	}
 
    /**
-	* To return the SocketAddress of an ID
+	* To return the Address of an ID
 	* @d ID of the destination
    	**/
-   public static String searchSocketAddress(String d) {
+   public static String searchAddress(String d) {
    		String sAddress = "";	
    		for (int i = 0; i < link.size(); i++) {
 			String l = new String((link.get(i).toString()).getBytes(), 0, 4);
@@ -58,14 +58,19 @@ public class Manager
    	* @m message to be sent to the server, with source and destination IDs
     **/
    public static void sendToServer(String d, String m) {
+   		System.out.println(searchAddress(d));
    		try{
-	   		InetAddress addr = InetAddress.getByName(searchSocketAddress(d));
-	   		socket.connect(addr, 4);
-	   		DatagramPacket sendPacket = new DatagramPacket(dataOut, dataOut.length, server, 7);
-        	socket.send(sendPacket);
-		}catch (UnknownHostException uhe){}
-		
-   		
+
+	   		DatagramSocket nuevo = new DatagramSocket();
+	   		InetAddress addr = InetAddress.getByName(searchAddress(d));
+	   		nuevo.connect(addr, 4);
+	   		DatagramPacket ms = new DatagramPacket(m.getBytes(), m.length(), addr, 4);
+        	nuevo.send(ms);
+		}
+		catch (UnknownHostException uhe){}
+     	catch (SocketException se) {System.err.println(se);}
+     	catch (IOException e) {System.err.println(e);}
+     	catch (Exception e) {}	
    }
 
 
@@ -95,7 +100,7 @@ public class Manager
 					System.out.println("ID ALREADY EXISTS..");
 
 				else {
-					link.add(newID + packet.getSocketAddress());
+					link.add(newID + packet.getAddress());
 					System.out.println("ID " + newID + " added..");
 				}
 				
