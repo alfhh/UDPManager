@@ -9,6 +9,7 @@ public class Manager
    static LinkedList link = new LinkedList();
    static DatagramSocket socket;
 
+   
    /**
    	* Method used to check id the id already exists.
    	* @flag Flag used to check a duplicated ID
@@ -24,6 +25,22 @@ public class Manager
    		}
    		return flag;
 	}
+
+	/**
+   	* Method used to check if the ID used as source is correct
+    **/
+   public static boolean checkID(String id) {
+		boolean flag = false;
+
+		for (int i = 0; i < link.size(); i++) {
+			String l = new String(link.get(i).toString());
+			if(id.equals(l))
+				flag = true; // DUPLICATED ID!
+   		}
+   		return flag;
+	}
+
+
 
    /**
 	* To return the Address of an ID
@@ -123,8 +140,8 @@ public class Manager
 				String destination = pData.substring(4, 8);
 				String mensaje = pData.substring(8, pData.length());
 
-				if(!checkDuplicate(source))
-					System.out.println("Source not found");
+				if(!checkID(source+packet.getAddress()))
+					System.out.println("You are not " + source);
 
 				else if(!checkDuplicate(destination))
 					System.out.println("Target not found");
