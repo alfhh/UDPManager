@@ -30,7 +30,7 @@ public class Servidor
 	  dataOut = theLine.getBytes();
 	  DatagramPacket sendPacket = new DatagramPacket(dataOut, dataOut.length, server, 7);
 	  socket.send(sendPacket);
-	  System.out.println("Sever up");
+	  System.out.println("Sever up..");
      }  // end try
      catch (UnknownHostException e) {System.err.println(e);}  
      catch (SocketException se) {System.err.println(se);}
