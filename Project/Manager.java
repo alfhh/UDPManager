@@ -33,8 +33,9 @@ public class Manager
 		boolean flag = false;
 
 		for (int i = 0; i < link.size(); i++) {
-			String l = new String(link.get(i).toString());
-			if(id.equals(l))
+			String  l = new String(link.get(i).toString());
+			String [] temp = l.split(":");
+			if(id.equals(temp[0]))
 				flag = true; // DUPLICATED ID!
    		}
    		return flag;
@@ -48,16 +49,34 @@ public class Manager
    	**/
    public static String searchAddress(String d) {
    		String sAddress = "";	
+   		String[] temp2 = null;
    		for (int i = 0; i < link.size(); i++) {
 			String l = new String((link.get(i).toString()).getBytes(), 0, 4);
 			if(d.equals(l)){
 				String temp = link.get(i).toString();
 				sAddress = temp.substring(5, temp.length());
+				temp2 = sAddress.split(":");
+				System.out.println(temp2[0]);
    			}
 		}
-		return sAddress;
+		return temp2[0];
    }
 
+
+   public static String getPort(String d) {
+   		String sAddress = "";	
+   		String[] temp2 = null;
+   		for (int i = 0; i < link.size(); i++) {
+			String l = new String((link.get(i).toString()).getBytes(), 0, 4);
+			if(d.equals(l)){
+				String temp = link.get(i).toString();
+				sAddress = temp.substring(5, temp.length());
+				temp2 = sAddress.split(":");
+				//System.out.println(temp2[1]);
+   			}
+		}
+		return temp2[1];
+   }
 
    /**
 	* Method used to display all the elements of the
@@ -80,8 +99,9 @@ public class Manager
 
 	   		DatagramSocket nuevo = new DatagramSocket();
 	   		InetAddress addr = InetAddress.getByName(searchAddress(d));
-	   		nuevo.connect(addr, 4);
-	   		DatagramPacket ms = new DatagramPacket((s+m).getBytes(), (s+m).length(), addr, 4);
+	   		nuevo.connect(addr, Integer.parseInt(getPort(d))+1);
+	   		//DatagramPacket ms = new DatagramPacket((s+m).getBytes(), (s+m).length(), addr, Integer.parseInt(getPort(d)));
+	   		DatagramPacket ms = new DatagramPacket((s+m).getBytes(), (s+m).length(), addr, Integer.parseInt(getPort(d))+1);
         	nuevo.send(ms);
 		}
 		catch (UnknownHostException uhe){}
@@ -127,7 +147,10 @@ public class Manager
 					System.out.println("ID ALREADY EXISTS..");
 
 				else {
-					link.add(newID + packet.getAddress()); // Address of the Socket
+					link.add(newID + packet.getSocketAddress()); // Address of the Socket
+					InetAddress addr = InetAddress.getByName(searchAddress(newID));
+					DatagramPacket port = new DatagramPacket(getPort(newID).getBytes(), getPort(newID).length(), addr, Integer.parseInt(getPort(newID)));
+					socket.send(port);
 					System.out.println("ID " + newID + " added..");
 				}
 				
